@@ -10,6 +10,7 @@ const Persons = ({persons, searchField}) => {
       return filteredPersons.map(person => 
         <div key={person.id}>
           {person.name} {person.number}
+          <button>delete</button>
         </div>
       )
 }

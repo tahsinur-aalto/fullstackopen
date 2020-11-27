@@ -3,6 +3,7 @@ import axios from 'axios'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import personService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
@@ -15,11 +16,10 @@ const App = () => {
 
   const getPersonsFromDB = () => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(personsData => {
+        setPersons(personsData)
       })
   }
 
@@ -40,11 +40,22 @@ const App = () => {
         alert(`${newName} is already added to phonebook`) // String template like f-strings
       }
       else{
-        setPersons(persons.concat(personObject)) // Append to notes array by creating copy
+        personService
+          .create(personObject)
+          .then(returnedPerson => {
+            // Add newly added person to current state
+            setPersons(persons.concat(returnedPerson)) // Append to persons array by creating copy
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        
       }
       setNewName('')  // Reset value of controlled input
       setNewNumber('')
   }
+
+  
 
   // Register person change event
   const handlePersonChange = (event) => {
