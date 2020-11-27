@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
@@ -35,27 +34,55 @@ const App = () => {
       // important: Math.random() < 0.5,
       id: persons.length + 1,
     }
-    
-      if(persons.map(person => person.name).includes(newName)){
-        alert(`${newName} is already added to phonebook`) // String template like f-strings
-      }
-      else{
-        personService
-          .create(personObject)
-          .then(returnedPerson => {
-            // Add newly added person to current state
-            setPersons(persons.concat(returnedPerson)) // Append to persons array by creating copy
-          })
-          .catch(error => {
-            console.log(error)
-          })
-        
-      }
-      setNewName('')  // Reset value of controlled input
-      setNewNumber('')
+    const index = persons.map(person => person.name).indexOf(newName);
+    console.log(index)
+    if(index > -1){ // Already exists so update
+      updatePerson(personObject, index);
+    }else{ // Index is -1 which means does not exist
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          // Add newly added person to current state
+          setPersons(persons.concat(returnedPerson)) // Append to persons array by creating copy
+        })
+        .catch(error => {
+          console.log(error)
+        })
+      
+    }
+    setNewName('')  // Reset value of controlled input
+    setNewNumber('')
   }
 
-  
+  const updatePerson = (updatedPerson, index) => {
+    const personObj = persons[index];
+    window.confirm(`${updatedPerson.name} is already added to the phonebook, replace the old number with a new one?`)
+    personService
+    .update(personObj.id, updatedPerson)
+    .then(returnedPerson => {
+      setPersons(persons.map(p => p.id === personObj.id
+        ? {...updatedPerson, id: returnedPerson.id }
+        : p
+      ))
+    })
+    .catch(error => {
+      console.log(`Updating of person ${newName} failed as person was already removed from the server `)
+    })
+  }
+
+
+  const deletePerson = (id, name) => {
+    if(window.confirm(`Delete ${name}?`)){
+      personService
+      .remove(id)
+      .then(() =>  {
+        setPersons(persons.filter(p => p.id !== id) )
+      })
+      .catch(error => {
+        console.log(error)
+      })
+    }
+  }
 
   // Register person change event
   const handlePersonChange = (event) => {
@@ -93,6 +120,7 @@ const App = () => {
       <Persons 
         persons={persons}
         searchField={searchField}
+        removePerson={deletePerson}
       />
     </div>
   )
