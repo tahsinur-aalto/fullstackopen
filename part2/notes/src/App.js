@@ -1,11 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
+import Notification from './components/Notification'
 import noteService from './services/notes'
+import './index.css'
+
+const Footer = () => {
+  const footerStyle = {
+    color: 'green',
+    fontStyle: 'italic',
+    fontSize: 16
+  }
+  return (
+    <div style={footerStyle}>
+      <br />
+      <em>Note app, Department of Computer Science, University of Helsinki 2020</em>
+    </div>
+  )
+}
 
 const App = (props) => {
-  const [notes, setNotes] = useState(props.notes)
+  const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('a new note...') // Stores user-submitted input
   const [showAll, setShowAll] = useState(true) // Track which notes to show
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // Adds note when form is submitted
   const addNote = (event) => {
@@ -29,7 +46,6 @@ const App = (props) => {
 
 
   const hook = () => {
-    console.log('effect')
     noteService
       .getAll()
       .then(initialNotes => {
@@ -41,7 +57,6 @@ const App = (props) => {
 
   // Register note change event
   const handleNoteChange = (event) => {
-    console.log(event.target.value)
     setNewNote(event.target.value)
   }
   
@@ -50,6 +65,13 @@ const App = (props) => {
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important === true)
+  
+  const noteRows = () => notesToShow.map(note =>
+      <Note key={note.id} 
+            note={note} 
+            toggleImportance={() => toggleImportanceOf(note.id)}
+      />
+    )
 
   const toggleImportanceOf = id => {
     const note = notes.find(n => n.id === id) // Find note that matches the 
@@ -64,36 +86,34 @@ const App = (props) => {
         setNotes(notes.map(note => note.id !== id ? note : returnedNote))
       })
       .catch(error => {
-        alert(
-          `the note '${note.content}' was already deleted from server`
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
         )
-        // Remove deleted note from state
+        // Remove error message after 5 seconds
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
         setNotes(notes.filter(n => n.id !== id))
       })
   }
 
-
   return (
     <div>
       <h1>Notes</h1>
-
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)} >
           show {showAll ? 'important' : 'all' }
         </button>
       </div>
       <ul>
-        {notesToShow.map(note =>
-          <Note key={note.id} 
-              note={note} 
-              toggleImportance={() => toggleImportanceOf(note.id)}
-          />
-        )}
+        {noteRows()}
       </ul>
       <form onSubmit={addNote}>
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">save</button>
       </form> 
+      <Footer />
     </div>
   )
 }
