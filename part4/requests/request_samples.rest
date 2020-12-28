@@ -1,0 +1,15 @@
+DELETE http://localhost:3003/api/blogs/3
+
+###
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+    "title": "Hello Blog",
+    "author": "Tahsinur Rahman",
+    "url": "abcdef.com",
+    "likes": 11
+}
+
+###
+GET http://localhost:3003/api/blogs
