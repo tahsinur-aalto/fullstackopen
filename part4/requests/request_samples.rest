@@ -3,13 +3,36 @@ DELETE http://localhost:3003/api/blogs/3
 ###
 POST http://localhost:3003/api/blogs
 content-type: application/json
+Authorization: 
+{
+    "title": "Canonical string reduction",
+    "author": "Edsger W. Dijkstra",
+    "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    "likes": 12
+}
+
+
+###
+DELETE http://localhost:3003/api/blogs/5fed70617656110ce8e6c0eb
+
+
+###
+PUT http://localhost:3003/api/blogs/5fed747ef7b51f361c007029
+content-type: application/json
 
 {
-    "title": "Hello Blog",
-    "author": "Tahsinur Rahman",
-    "url": "abcdef.com",
-    "likes": 11
+    "title": "Canonical string reduction",
+    "author": "Edsger W. Dijkstra",
+    "url": "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    "likes": 13
 }
 
 ###
-GET http://localhost:3003/api/blogs
+POST http://localhost:3003/api/users
+content-type: application/json
+
+{
+    "username": "Dijkstra",
+    "name": "Edsger W. Dijkstra",
+    "password": "12345"
+}
