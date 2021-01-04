@@ -107,3 +107,37 @@ test("Event handler called twice if like button called twice", () => {
     expect(mockHandler.mock.calls.length).toBe(2)
 })
 
+test("Event handler called with correct details when creating new blog", () => {
+
+    const mockHandler = jest.fn()
+
+    const testUser = {
+        username: "test_user",
+        name: "Test User"
+    }
+
+    const testBlog = {
+        title: "Test Blog",
+        author: "test_user",
+        url: "www.test.com",
+    } 
+
+    const component = render(
+        <CreateBlog
+           createBlog={mockHandler}
+        />
+    )
+
+    const title = component.container.querySelector('#title')
+    const author = component.container.querySelector('#author')
+    const url = component.container.querySelector('#url')
+    const form = component.container.querySelector('#form')
+    
+    fireEvent.change(title, { target: { value: testBlog.title } })
+    fireEvent.change(author, { target: { value: testBlog.author } })
+    fireEvent.change(url, { target: { value: testBlog.url } })
+    fireEvent.submit(form)
+
+    expect(mockHandler.mock.calls.length).toBe(1)
+    expect(mockHandler.mock.calls[0][0]).toStrictEqual(testBlog)
+})
