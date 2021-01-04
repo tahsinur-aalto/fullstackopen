@@ -62,14 +62,11 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = (blogObject) => {
+  const createBlog = async (blogObject) => {
     createBlogRef.current.toggleVisibility()
     try {
-      blogService
-        .create(blogObject)
-        .then(returnedBlog => {
-          setBlogs(blogs.concat(returnedBlog))
-        })
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog))
 
       setSuccessMessage(`a new blog ${blogObject.title} by ${blogObject.author} added`)
       setTimeout(() => {
@@ -84,8 +81,6 @@ const App = () => {
     }
 
   }
-
-  console.log(blogs)
 
   if (user === null){
     return (
