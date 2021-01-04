@@ -82,6 +82,47 @@ const App = () => {
 
   }
 
+  const incrementLikes = async (blog_id) => {
+    
+    const blogToUpdate = blogs.find(blog => blog.id === blog_id)
+    const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes+1 }
+
+    try {
+      const returnedBlog = await blogService.update(updatedBlog, blog_id)
+      setBlogs(blogs.map(blog => blog.id !== blog_id ? blog: returnedBlog))
+
+      setSuccessMessage(`Likes of blog ${updatedBlog.title} updated`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch(exception){
+      console.log(exception)
+      setErrorMessage(`Updating of likes of blog ${updatedBlog.title} failed`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  const deleteBlog = async (blogObject) => {
+    if(window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
+      try {
+        await blogService.deleteBlog(blogObject.id)
+        setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+        setSuccessMessage(`Blog ${blogObject.title} by ${blogObject.author} has been deleted`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      } catch(exception) {
+          console.log(exception)
+          setErrorMessage(`Deleting of blog ${blogObject.title} by ${blogObject.author} failed`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        }
+    }
+  }
+
   if (user === null){
     return (
       // Togglable is a parent component
@@ -111,8 +152,14 @@ const App = () => {
         </Togglable>
         
         <div>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+          {blogs.sort((x, y) => y.likes - x.likes).map(blog =>
+            <Blog 
+            key={blog.id} 
+            blog={blog} 
+            user={user}
+            incrementLikes={() => incrementLikes(blog.id)}
+            deleteBlog={deleteBlog}
+            />
           )}
         </div>
       </div>
