@@ -44,7 +44,7 @@ const App = () => {
         'loggedBlogUser', JSON.stringify(user))
       setUsername('')
       setPassword('')
-      setSuccessMessage('Successfully logged In')
+      setSuccessMessage('Successfully logged in')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -105,6 +105,7 @@ const App = () => {
   }
 
   const deleteBlog = async (blogObject) => {
+    console.log(blogObject.id)
     if(window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
       try {
         await blogService.deleteBlog(blogObject.id)
@@ -139,8 +140,8 @@ const App = () => {
   } else {
     return (
       <div>
-        <p>{successMessage}</p>
-        <p>{errorMessage}</p>
+        <p id="successMessage">{successMessage}</p>
+        <p id="errorMessage">{errorMessage}</p>
         <h2>blogs</h2>
         <p>{user.name} logged in
           <button onClick={handleLogout}>Logout</button>

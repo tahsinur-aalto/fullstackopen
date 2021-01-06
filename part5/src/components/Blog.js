@@ -19,7 +19,7 @@ const Blog = ({ blog, user, incrementLikes, deleteBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-
+  
   const deleteButtonVisible = blog.user.username === user.username ? true : false
   const deleteButtonStyle = {
     display: deleteButtonVisible ? "" : "none"
@@ -33,13 +33,13 @@ const Blog = ({ blog, user, incrementLikes, deleteBlog }) => {
       </div>
       <div style={showWhenVisible} className="hiddenInfo">
         {blog.title} {blog.author}<button onClick={toggleVisibility}>hide</button>
-        <div>
+        {/* <div className="blogDetails"> */}
           <p>{blog.url}</p>
           <p>likes {blog.likes}
           <button className="likeButton" onClick={incrementLikes}>like</button></p>
           <p>Added by {user.username}</p>
           <button style={deleteButtonStyle} onClick={() => deleteBlog(blog)}>delete</button>
-        </div>
+        {/* </div> */}
       </div>
     </div>
   )
